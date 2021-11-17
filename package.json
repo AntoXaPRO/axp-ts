@@ -1,0 +1,20 @@
+{
+	"name": "axp-ts",
+	"version": "1.0.0",
+	"description": "TypeScript helper library",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc",
+		"prepare": "npm run build"
+	},
+	"keywords": [],
+	"author": "AntoXa PRO <info@antoxa.pro>",
+	"license": "ISC",
+	"devDependencies": {
+		"ts-node": "^10.4.0"
+	}
+}
