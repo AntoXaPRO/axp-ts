@@ -1,11 +1,12 @@
-import { DataResultEntity } from '../src'
+import { DataResultEntity, Pagination } from '../src'
 
 describe('Data Result', () => {
 	let testObject: object = {}
 	const testObjectResultInfo = { type: 'object', length: 1, pagination: undefined }
 
 	let testArray: string[] = []
-	const testArrayResultInfo = { type: 'array', length: 2, pagination: { page: 1, limit: 10, skip: 0, total: 2 } }
+	const testPaginationObj = { page: 1, limit: 10, skip: 0, total: 2 }
+	const testArrayResultInfo = { type: 'array', length: 2, pagination: testPaginationObj }
 
 	beforeEach(() => {
 		testObject = { field: 'Test', number: 10 }
@@ -38,5 +39,11 @@ describe('Data Result', () => {
 		dR.setData(testArray)
 		expect(dR.data).toBeInstanceOf(Array)
 		expect(dR.info).toEqual(testArrayResultInfo)
+	})
+
+	test('Set array data and pagination', () => {
+		const dR = new DataResultEntity()
+		dR.setData(testArray, new Pagination())
+		expect(dR.info.pagination).toEqual(testPaginationObj)
 	})
 })

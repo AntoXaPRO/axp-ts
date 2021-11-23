@@ -51,7 +51,7 @@ export default class DataResultEntity<T> implements IDataResult<T> {
 	/**
 	 * Присваивает значение в свойство data и заполняет поле "info".
 	 */
-	setData(data: T = null) {
+	setData(data: T = null, pagination: IPagination = null) {
 		if (data !== null) {
 			this.data = data
 		}
@@ -60,8 +60,16 @@ export default class DataResultEntity<T> implements IDataResult<T> {
 			if (Array.isArray(this.data)) {
 				this.info.type = 'array'
 				this.info.length = [...this.data].length
-				this.info.pagination = new Pagination()
-				this.info.pagination.total = this.info.length
+
+				if (pagination === null) {
+					this.info.pagination = new Pagination()
+				} else {
+					this.info.pagination = pagination
+				}
+
+				if (this.info.pagination.total < this.info.length) {
+					this.info.pagination.total = this.info.length
+				}
 			} else {
 				this.info.type = 'object'
 				this.info.length = 1
