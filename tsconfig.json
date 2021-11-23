@@ -8,6 +8,5 @@
 		"moduleResolution": "node",
 		"sourceMap": true
 	},
-	"include": ["src"],
-	"exclude": ["node_modules", "dist"]
+	"exclude": ["__tests__", "node_modules", "dist"]
 }

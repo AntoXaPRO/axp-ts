@@ -1,4 +1,4 @@
-import { IErrorItem } from './error-item'
+import { IErrorItem, IPagination, Pagination } from './'
 
 /**
  * Интерфейс информации о данных.
@@ -6,6 +6,7 @@ import { IErrorItem } from './error-item'
 interface IInfoDataResult {
 	type: 'object' | 'array' | 'undefined'
 	length: number
+	pagination?: IPagination
 }
 
 /**
@@ -44,21 +45,27 @@ export default class DataResultEntity<T> implements IDataResult<T> {
 
 	constructor(data: any = {}) {
 		this.data = data
+		this.setData()
 	}
 
 	/**
 	 * Присваивает значение в свойство data и заполняет поле "info".
 	 */
-	setData(data: T) {
-		if (data) {
-			if (Array.isArray(data)) {
+	setData(data: T = null) {
+		if (data !== null) {
+			this.data = data
+		}
+
+		if (this.data) {
+			if (Array.isArray(this.data)) {
 				this.info.type = 'array'
-				this.info.length = [...data].length
+				this.info.length = [...this.data].length
+				this.info.pagination = new Pagination()
+				this.info.pagination.total = this.info.length
 			} else {
 				this.info.type = 'object'
 				this.info.length = 1
 			}
-			this.data = data
 		}
 	}
 }
