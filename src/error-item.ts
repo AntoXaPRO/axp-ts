@@ -1,15 +1,12 @@
+import { IErrorItem } from '.'
+
 /**
- * Интефейс модели елемента ошибки.
+ * Класс модели элемента ошибки.
  */
-interface IErrorItem {
-	code: string
-	text: string
-}
-
-export { IErrorItem }
-
-/* 
-Экспорт класса. */
-export default class ErrorItem implements IErrorItem {
+class ErrorItem implements IErrorItem {
 	constructor(public text: string, public code: string = 'error') {}
 }
+
+/* 
+Экспорт модуля. */
+export default ErrorItem

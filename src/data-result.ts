@@ -1,79 +1,85 @@
-import { IErrorItem, IPagination, Pagination } from './'
+import {
+	IDataResult,
+	IInfoDataResult,
+	IErrorItem,
+	IPagination,
+	Pagination,
+} from '.';
 
 /**
- * Интерфейс информации о данных.
+ * Класс описывающий модель данных результата запроса (к примеру ответ от сервера).
  */
-interface IInfoDataResult {
-	type: 'object' | 'array' | 'undefined'
-	length: number
-	pagination?: IPagination
-}
+class DataResultEntity<T> implements IDataResult<T> {
+	/**
+	 * Код статуса ответа.
+	 */
+	status: number = 200;
 
-/**
- * Интерфейс модели данных для возврата.
- */
-interface IDataResult<T> {
-	status: number
-	message: string
-	data: T
-	errors: IErrorItem[]
-	info: IInfoDataResult
-	setData(data: T): void
-}
+	/**
+	 * Сообщение
+	 */
+	message: string = 'Ok';
 
-export { IDataResult }
+	/**
+	 * Объект данных запроса.
+	 */
+	data: T;
 
-/**
- * Класс описывающий модель данных ответа сервера.
- */
-export default class DataResultEntity<T> implements IDataResult<T> {
-	// Код статуса ответа.
-	status: number = 200
+	/**
+	 * Информация о данных.
+	 */
+	info: IInfoDataResult = { type: 'undefined', length: 0 };
 
-	// Сообщение.
-	message: string = 'Ok'
-
-	// Основной объект которыей должен отдать контроллер.
-	// Нужно переопределить в наследуемом классе.
-	data: T
-
-	// Информация о данных.
-	info: IInfoDataResult = { type: 'undefined', length: 0 }
-
-	// Список ошибок.
-	errors: IErrorItem[] = []
+	/**
+	 * Список ошибок.
+	 */
+	errors: IErrorItem[] = [];
 
 	constructor(data: any = {}) {
-		this.data = data
-		this.setData()
+		this.data = data;
+		this.setData();
 	}
 
 	/**
 	 * Присваивает значение в свойство data и заполняет поле "info".
+	 * @param data - Объект данных.
+	 * @param pagination - Модель пагинации используется если данные в виде массива.
 	 */
-	setData(data: T = null, pagination: IPagination = null) {
+	setData(data: T = null, pagination?: IPagination): void {
+		// Присваиваем значение.
 		if (data !== null) {
-			this.data = data
+			this.data = data;
 		}
 
+		// Если данные есть.
 		if (this.data) {
+			// Если данные это массив.
 			if (Array.isArray(this.data)) {
-				this.info.type = 'array'
-				this.info.length = [...this.data].length
+				this.info.type = 'array';
+				this.info.length = [...this.data].length;
 
-				if (pagination === null) {
-					this.info.pagination = new Pagination()
+				if (pagination) {
+					// Если есть пагинация присваиваем.
+					this.info.pagination = pagination;
 				} else {
-					this.info.pagination = pagination
+					// Если нет то инициализируем.
+					this.info.pagination = new Pagination();
 				}
 
+				// Если общее кол-во меньше чем размер массива.
+				// Это обычно значение по умолчанию "0" при инициализации объекта пагинации.
 				if (this.info.pagination.total < this.info.length) {
-					this.info.pagination.total = this.info.length
+					this.info.pagination.total = this.info.length;
 				}
 			} else {
-				this.info.type = 'object'
-				this.info.length = 1
+				// Данные это объект.
+				this.info.type = 'object';
+				this.info.length = 1;
 			}
 		}
 	}
 }
+
+/* 
+Экспорт модуля. */
+export default DataResultEntity;
