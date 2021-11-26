@@ -1,5 +1,6 @@
 import {
 	IDataResult,
+	TInfoDataResult,
 	IInfoDataResult,
 	IErrorItem,
 	IPagination,

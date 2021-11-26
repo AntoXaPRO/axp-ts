@@ -21,13 +21,92 @@ interface IErrorItem {
 Экспорт. */
 export { IErrorItem, ErrorItem };
 
+/** ==== Пагинация ===================== */
+/**
+ * Тип аргумента пагинации.
+ */
+type TPaginationParseArg = number | string | undefined;
+
+/**
+ * Тип аргументов пагинации.
+ */
+type TPaginationArguments = {
+	page?: TPaginationParseArg;
+	limit?: TPaginationParseArg;
+	total?: number;
+};
+
+/**
+ * Тип данных пагинации.
+ */
+type TPagination = {
+	page: number;
+	limit: number;
+	total: number;
+
+	skip: number;
+	pages: number;
+};
+
+/**
+ * Интерфейс объекта пагинации.
+ */
+interface IPagination extends TPagination {
+	/**
+	 * Максимальный лимит элементов.
+	 */
+	get maxLimit(): number;
+
+	/**
+	 * Парсинг аргументов.
+	 * @param arg - Значение аргумента для парсинга.
+	 * @param defaultReturnValue - Возвращаемое значение по умолчанию.
+	 * @returns Возвращает абсолютное значение числа аргумента.
+	 */
+	parseArg(
+		arg: number | string | undefined,
+		defaultReturnValue: number
+	): number;
+
+	/**
+	 * Присваивает значения для основных свойств класса и считает кол-во
+	 * пропускаемых элементов в зависимости от полученных аргументов.
+	 * @param args - Аргументы пагинации.
+	 * @returns Возвращает текущий экземпляр класса.
+	 */
+	set(args: TPaginationArguments): this;
+
+	/**
+	 * Возвращает простой объект пагинации.
+	 * @returns Объект пагинации.
+	 */
+	toObject(): TPagination;
+}
+
+/* 
+ Экспорт. */
+export {
+	TPaginationParseArg,
+	TPaginationArguments,
+	TPagination,
+	IPagination,
+	Pagination,
+};
+
 /** ==== Модель данных результата запроса. ======== */
+/**
+ * Тип информации о данных.
+ */
+type TInfoDataResult = {
+	type: 'object' | 'array' | 'undefined';
+	length: number;
+	pagination?: TPagination;
+};
+
 /**
  * Интерфейс информации о данных.
  */
-interface IInfoDataResult {
-	type: 'object' | 'array' | 'undefined';
-	length: number;
+interface IInfoDataResult extends TInfoDataResult {
 	pagination?: IPagination;
 }
 
@@ -70,51 +149,4 @@ interface IDataResult<T> {
 
 /* 
 Экспорт. */
-export { IDataResult, IInfoDataResult, DataResultEntity };
-
-/** ==== Пагинация ===================== */
-
-/**
- * Тип данных пагинации.
- */
-type TPagination = {
-	page: number;
-	limit: number;
-	skip: number;
-	total: number;
-};
-
-/**
- * Тип аргументов пагинации.
- */
-type TPaginationArguments = {
-	page?: number | string;
-	limit?: number | string;
-};
-
-/**
- * Интерфейс объекта пагинации.
- */
-interface IPagination extends TPagination {
-	/**
-	 * Парсинг аргументов.
-	 * @param arg - Значение аргумента для парсинга.
-	 * @param defaultReturnValue - Возвращаемое значение по умолчанию.
-	 * @returns Возвращает абсолютное значение числа аргумента.
-	 */
-	parseArg(
-		arg: number | string | undefined,
-		defaultReturnValue: number
-	): number;
-
-	/**
-	 * Расчитать и получить кол-во пропускаемых елементов.
-	 * @param page - Номер запрашиваемой страницы.
-	 * @returns Возвращает число пропускаемых элементов.
-	 */
-	getSkip(page: number): number;
-}
-
-/* 
-Экспорт. */
-export { TPagination, TPaginationArguments, IPagination, Pagination };
+export { TInfoDataResult, IInfoDataResult, IDataResult, DataResultEntity };

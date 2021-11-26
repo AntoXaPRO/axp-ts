@@ -1,28 +1,30 @@
-import { DataResultEntity, Pagination } from '../src';
+import {
+	DataResultEntity,
+	TPagination,
+	Pagination,
+	TInfoDataResult,
+} from '../src';
 
 describe('Data Result', () => {
-	let testObject: object = {};
-	const testObjectResultInfo = {
+	let testObject: object = { field: 'Test', number: 10 };
+	const testObjectResultInfo: TInfoDataResult = {
 		type: 'object',
 		length: 1,
-		pagination: undefined,
 	};
 
-	let testArray: string[] = [];
-	const testPaginationObj = { page: 1, limit: 10, skip: 0, total: 2 };
-	const testArrayResultInfo = {
+	const testPaginationObj = new Pagination({ page: 1, limit: 10 });
+	testPaginationObj.total = 2;
+
+	let testArray: string[] = ['test1', 'test2'];
+	const testArrayResultInfo: TInfoDataResult = {
 		type: 'array',
 		length: 2,
 		pagination: testPaginationObj,
 	};
 
-	beforeEach(() => {
-		testObject = { field: 'Test', number: 10 };
-		testArray = ['test1', 'test2'];
-	});
-
-	test('Create object instance', () => {
+	test('Create instance', () => {
 		const dR = new DataResultEntity(testObject);
+
 		expect(dR.data).toBeInstanceOf(Object);
 		expect(dR.data).toEqual(testObject);
 		expect(dR.info).toEqual(testObjectResultInfo);
@@ -39,6 +41,7 @@ describe('Data Result', () => {
 	test('Create array instance', () => {
 		const dR = new DataResultEntity(testArray);
 		expect(dR.data).toBeInstanceOf(Array);
+		expect(dR.data).toEqual(testArray);
 		expect(dR.info).toEqual(testArrayResultInfo);
 	});
 

@@ -1,16 +1,28 @@
-import { IPagination, TPaginationArguments } from '.';
+import {
+	IPagination,
+	TPaginationParseArg,
+	TPaginationArguments,
+	TPagination,
+} from '.';
 
 // Константы.
-const defaults = { page: 1, limit: 10, maxLimit: 999 };
+const defaults = { page: 1, limit: 10, maxLimit: 100 };
 
 /**
  * Класс объекта пагинации.
  */
 class Pagination implements IPagination {
-	page: number;
-	limit: number;
-	skip: number;
+	/**
+	 * Максимальный лимит элементов.
+	 */
+	private _maxLimit: number;
+
+	page: number = defaults.page;
+	limit: number = defaults.limit;
+
+	skip: number = 0;
 	total: number = 0;
+	pages: number = 0;
 
 	/**
 	 * Парсинг аргументов (Статический метод).
@@ -19,7 +31,7 @@ class Pagination implements IPagination {
 	 * @returns Возвращает абсолютное значение числа аргумента.
 	 */
 	static parseArg(
-		arg: number | string | undefined,
+		arg: TPaginationParseArg,
 		defaultReturnValue: number
 	): number {
 		return Math.abs(
@@ -30,16 +42,16 @@ class Pagination implements IPagination {
 	}
 
 	constructor(args: TPaginationArguments = {}, maxLimit?: number) {
-		// Присваиваем значения и приводим к правильному типу.
-		this.page = Pagination.parseArg(args.page, defaults.page);
-		this.limit = Pagination.parseArg(args.limit, defaults.limit);
+		// Максимальный лимит.
+		this._maxLimit = this.parseArg(maxLimit, defaults.maxLimit);
+		this.set(args);
+	}
 
-		// Блокируем лимит если больше максимального.
-		maxLimit = Pagination.parseArg(maxLimit, defaults.maxLimit);
-		if (this.limit > maxLimit) this.limit = maxLimit;
-
-		// Рассчитываем сколько скипнуть.
-		this.skip = this.getSkip();
+	/**
+	 * Максимальный лимит элементов.
+	 */
+	get maxLimit() {
+		return this._maxLimit;
 	}
 
 	/**
@@ -48,26 +60,66 @@ class Pagination implements IPagination {
 	 * @param defaultReturnValue - Возвращаемое значение по умолчанию.
 	 * @returns Возвращает абсолютное значение числа аргумента.
 	 */
-	parseArg(
-		arg: number | string | undefined,
-		defaultReturnValue: number
-	): number {
+	parseArg(arg: TPaginationParseArg, defaultReturnValue: number): number {
 		return Pagination.parseArg(arg, defaultReturnValue);
 	}
 
 	/**
-	 * Расчитать и получить кол-во пропускаемых елементов.
-	 * @param page - Номер запрашиваемой страницы.
-	 * @returns Возвращает число пропускаемых элементов.
+	 * Присваивает значения для основных свойств класса и считает кол-во
+	 * пропускаемых элементов в зависимости от полученных аргументов.
+	 * @param args - Аргументы пагинации.
+	 * @returns Возвращает текущий экземпляр класса.
 	 */
-	getSkip(page: number = this.page): number {
-		let skip = 0;
-		try {
-			page = Pagination.parseArg(page, defaults.page);
-			skip = (page - 1) * this.limit;
-		} catch (ex: any) {}
-		this.skip = skip > 0 ? skip : 0;
-		return this.skip;
+	set(args: TPaginationArguments = {}): this {
+		let isCalcSkip: boolean = false;
+
+		// Страница.
+		if (args.page && args.page !== this.page) {
+			// Инициализипуем страницу.
+			this.page = this.parseArg(args.page, defaults.page);
+			isCalcSkip = true;
+		}
+
+		// Лимит.
+		if (args.limit && args.limit !== this.limit) {
+			this.limit = this.parseArg(args.limit, this.limit);
+			isCalcSkip = true;
+		}
+
+		// Проверка лимита.
+		if (this.limit > this.maxLimit) this.limit = this.maxLimit;
+
+		// Общее кол-во.
+		if (args.total && args.total !== this.total) {
+			this.total = Math.abs(args.total);
+			this.pages = Math.ceil(this.total / this.limit);
+		}
+
+		// Перерасчёт пропускаемых элементов.
+		if (isCalcSkip) {
+			let skip = 0;
+			try {
+				skip = (this.page - 1) * this.limit;
+			} catch (ex: any) {}
+			this.skip = skip > 0 ? skip : 0;
+		}
+
+		return this;
+	}
+
+	/**
+	 * Возвращает простой объект пагинации.
+	 * @returns Объект пагинации.
+	 */
+	toObject(): TPagination {
+		return {
+			page: this.page,
+			limit: this.limit,
+			total: this.total,
+
+			skip: this.skip,
+			pages: this.pages,
+		};
 	}
 }
 
