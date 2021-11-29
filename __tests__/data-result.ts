@@ -1,8 +1,8 @@
 import {
 	DataResultEntity,
 	TPagination,
-	Pagination,
 	TInfoDataResult,
+	Pagination,
 } from '../src';
 
 describe('Data Result', () => {
@@ -12,8 +12,13 @@ describe('Data Result', () => {
 		length: 1,
 	};
 
-	const testPaginationObj = new Pagination({ page: 1, limit: 10 });
-	testPaginationObj.total = 2;
+	const testPaginationObj: TPagination = {
+		page: 1,
+		limit: 2,
+		skip: 0,
+		total: 2,
+		pages: 1,
+	};
 
 	let testArray: string[] = ['test1', 'test2'];
 	const testArrayResultInfo: TInfoDataResult = {
@@ -53,9 +58,16 @@ describe('Data Result', () => {
 		expect(dR.info).toEqual(testArrayResultInfo);
 	});
 
-	test('Set array data and pagination', () => {
+	test('Pagination', () => {
 		const dR = new DataResultEntity();
-		dR.setData(testArray, new Pagination());
+		dR.setData(testArray);
+		expect(dR.info.pagination).toEqual(testPaginationObj);
+	});
+
+	test('Pagination set data', () => {
+		const dR = new DataResultEntity();
+		const pagination = new Pagination(testPaginationObj, 2);
+		dR.setData(testArray, pagination.toObject());
 		expect(dR.info.pagination).toEqual(testPaginationObj);
 	});
 });

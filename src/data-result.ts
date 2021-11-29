@@ -4,6 +4,7 @@ import {
 	IInfoDataResult,
 	IErrorItem,
 	IPagination,
+	TPagination,
 	Pagination,
 } from '.';
 
@@ -46,7 +47,7 @@ class DataResultEntity<T> implements IDataResult<T> {
 	 * @param data - Объект данных.
 	 * @param pagination - Модель пагинации используется если данные в виде массива.
 	 */
-	setData(data: T = null, pagination?: IPagination): void {
+	setData(data: T = null, pagination?: TPagination): void {
 		// Присваиваем значение.
 		if (data !== null) {
 			this.data = data;
@@ -60,11 +61,13 @@ class DataResultEntity<T> implements IDataResult<T> {
 				this.info.length = [...this.data].length;
 
 				if (pagination) {
-					// Если есть пагинация присваиваем.
 					this.info.pagination = pagination;
 				} else {
-					// Если нет то инициализируем.
-					this.info.pagination = new Pagination();
+					const pagination = new Pagination(
+						{ page: 1, limit: this.info.length, total: this.info.length },
+						this.info.length
+					);
+					this.info.pagination = pagination.toObject();
 				}
 
 				// Если общее кол-во меньше чем размер массива.

@@ -107,7 +107,7 @@ type TInfoDataResult = {
  * Интерфейс информации о данных.
  */
 interface IInfoDataResult extends TInfoDataResult {
-	pagination?: IPagination;
+	pagination?: TPagination;
 }
 
 /**
