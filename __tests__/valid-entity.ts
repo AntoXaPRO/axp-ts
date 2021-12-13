@@ -1,4 +1,4 @@
-import { string, number } from 'yup';
+import { object, string, number } from 'yup';
 import { ErrorItem, ValidEntity } from '../src';
 
 type TTestValid = {
@@ -7,11 +7,11 @@ type TTestValid = {
 	age?: number;
 };
 
-const schema = {
+const schema = object({
 	name: string().trim().required(),
 	test: string().trim().required(),
 	age: number().default(10),
-};
+});
 
 const obj = { name: 'Field name ', test: 'Test ' };
 const objTest = { name: 'Field name', age: 10, test: 'Test' };

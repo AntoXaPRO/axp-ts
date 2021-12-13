@@ -1,5 +1,4 @@
-import { object, ValidationError, SchemaOf } from 'yup';
-import { ObjectShape } from 'yup/lib/object';
+import { ValidationError, SchemaOf } from 'yup';
 
 import { ErrorItem } from '.';
 
@@ -8,7 +7,7 @@ interface IValidEntity<T> {
 	get errors(): ErrorItem[];
 	isValid(): boolean;
 	convertByFields(): T;
-	convertPreSave(): any;
+	convertPreSave(): T;
 }
 
 class ValidEntity<T> implements IValidEntity<T> {
@@ -17,8 +16,8 @@ class ValidEntity<T> implements IValidEntity<T> {
 
 	obj: T;
 
-	constructor(obj: T, schema: ObjectShape) {
-		this._schema = <SchemaOf<T>>object(schema);
+	constructor(obj: T, schema: SchemaOf<T>) {
+		this._schema = schema;
 		this.obj = this.convertByFields(obj || {});
 	}
 
@@ -30,7 +29,6 @@ class ValidEntity<T> implements IValidEntity<T> {
 		for (let key in this._errors) {
 			if (this._errors[key]) {
 				arr.push(new ErrorItem(this._errors[key], key));
-				// arr.push({ code: key, text: this._errors[key] });
 			}
 		}
 		return arr;
@@ -62,7 +60,7 @@ class ValidEntity<T> implements IValidEntity<T> {
 	 * Метод вызываемый перед сохранением в БД и возврощает объект который в итоге должен попасть в БД.
 	 * Предназначен в основном для переопределения, чтобы изменить объект перед сохранением.
 	 */
-	convertPreSave(): any {
+	convertPreSave(): T {
 		return this.obj;
 	}
 }
