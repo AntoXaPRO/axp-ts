@@ -1,6 +1,7 @@
 import ErrorItem from './error-item';
 import DataResultEntity from './data-result';
 import Pagination from './pagination';
+import ValidEntity, { IValidEntity } from './valid-entity';
 
 /** ==== Елемент ошибки. ========================== */
 /**
@@ -150,3 +151,7 @@ interface IDataResult<T> {
 /* 
 Экспорт. */
 export { TInfoDataResult, IInfoDataResult, IDataResult, DataResultEntity };
+
+/* 
+Экспорт. */
+export { IValidEntity, ValidEntity };
