@@ -38,6 +38,7 @@ class ValidEntity<T> implements IValidEntity<T> {
 	 * Валидация по схеме.
 	 */
 	isValid(): boolean {
+		this._errors = {};
 		try {
 			this._schema.validateSync(this.obj, { abortEarly: false });
 			return true;
