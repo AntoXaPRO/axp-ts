@@ -1,6 +1,6 @@
 {
 	"name": "axp-ts",
-	"version": "1.4.2",
+	"version": "1.4.3",
 	"description": "TypeScript helper library",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
