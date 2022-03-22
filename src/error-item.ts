@@ -1,12 +1,8 @@
-import { IErrorItem } from '.'
+import { TNotificationItem } from '.'
 
 /**
  * Класс модели элемента ошибки.
  */
-class ErrorItem implements IErrorItem {
-	constructor(public text: string, public code: string = 'error') {}
+export default class NotificationItem implements TNotificationItem {
+  constructor(public text: string, public code: string = 'info') {}
 }
-
-/* 
-Экспорт модуля. */
-export default ErrorItem
