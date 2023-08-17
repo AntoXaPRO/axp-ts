@@ -1,6 +1,6 @@
 {
 	"name": "axp-ts",
-	"version": "1.9.6",
+	"version": "1.9.7",
 	"description": "TypeScript helper library",
 	"author": "AntoXa PRO <info@antoxa.pro>",
 	"homepage": "https://antoxahub.ru/antoxa/axp-ts",
@@ -18,7 +18,7 @@
 		"prepare": "npm run build"
 	},
 	"dependencies": {
-		"zod": "^3.21.4"
+		"zod": "^3.22.1"
 	},
 	"devDependencies": {
 		"prettier": "^2.8.8",
