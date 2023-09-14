@@ -36,8 +36,6 @@ export const bFieldsSchema = {
 	string: z
 		.string()
 		.trim()
-		.min(2)
-		.max(64)
 		.describe(
 			FormSchemaCtrl.toString({
 				label: 'Строка',
@@ -79,16 +77,6 @@ export const cFieldsSchema = z.object({
 	dateUpdate: fieldSchema(bFieldsSchema.date, {
 		label: 'Дата изменения'
 	}),
-	q: fieldSchema(
-		z.preprocess(
-			val => String(val).replace(regexSearch, ''),
-			bFieldsSchema.string
-		),
-		{
-			label: 'Поиск',
-			component: 'ui-field-search'
-		}
-	),
 	name: fieldSchema(bFieldsSchema.string, {
 		label: 'Название'
 	}),
@@ -187,5 +175,23 @@ export const cFieldsSchema = z.object({
 	days: fieldSchema(bFieldsSchema.number.array(), {
 		label: 'Дни недели',
 		component: 'ui-picker-days'
-	})
+	}),
+	q: fieldSchema(
+		z.preprocess(
+			val => String(val).replace(regexSearch, ''),
+			bFieldsSchema.string
+		),
+		{
+			label: 'Поиск',
+			component: 'ui-field-search'
+		}
+	),
+	page: fieldSchema(
+		z.preprocess(val => Math.abs(Number(val)), bFieldsSchema.number),
+		{ label: 'Страница' }
+	),
+	limit: fieldSchema(
+		z.preprocess(val => Math.abs(Number(val)), bFieldsSchema.number),
+		{ label: 'Лимит' }
+	)
 })

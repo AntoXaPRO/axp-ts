@@ -27,7 +27,7 @@ export interface IFormModel<T> {
 /**
  * Базовая модель для валидирования форм.
  */
-export class BaseFormModel<T extends Object = {}> implements IFormModel<T> {
+export class BaseFormModel<T extends object = {}> implements IFormModel<T> {
 	_id: string
 
 	dateCreate?: Date

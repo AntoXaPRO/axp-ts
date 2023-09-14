@@ -1,5 +1,5 @@
 import type { TPagination } from './pagination'
-import type { TNotificationItem } from './notification'
+import type { TNotificationItem } from '../notification'
 
 import { Pagination } from './pagination'
 

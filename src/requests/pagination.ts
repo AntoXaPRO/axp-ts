@@ -1,25 +1,31 @@
 import { z } from 'zod'
-import { cFieldsSchema, fieldSchema } from './form'
+import { cFieldsSchema, fieldSchema } from '../forms'
 
-export const paginationSchema = z.object({
-	page: fieldSchema(cFieldsSchema.shape.number, {
-		label: 'Номер страницы'
-	}),
-	limit: fieldSchema(cFieldsSchema.shape.number, {
-		label: 'Лимит на странице'
-	}),
-	total: fieldSchema(cFieldsSchema.shape.number, {
-		label: 'Общее кол-во'
-	}),
-	skip: fieldSchema(cFieldsSchema.shape.number, {
-		label: 'Пропустить'
-	}),
-	pages: fieldSchema(cFieldsSchema.shape.number, {
-		label: 'Кол-во всех страниц'
+export const paginationSchema = cFieldsSchema
+	.pick({
+		page: true,
+		limit: true
 	})
-})
+	.extend({
+		total: fieldSchema(cFieldsSchema.shape.number, {
+			label: 'Общее кол-во'
+		}),
+		skip: fieldSchema(cFieldsSchema.shape.number, {
+			label: 'Пропустить'
+		}),
+		pages: fieldSchema(cFieldsSchema.shape.number, {
+			label: 'Кол-во всех страниц'
+		})
+	})
+	.describe('Пагинация')
 
 export type TPagination = z.infer<typeof paginationSchema>
+
+export const paginationQuerySchema = paginationSchema.pick({
+	page: true, limit: true
+})
+
+export type TPaginationQuery = z.infer<typeof paginationQuerySchema>
 
 // Константы.
 const DEFAULTS = { page: 1, limit: 10, maxLimit: 100 }
@@ -32,43 +38,11 @@ export type TPaginationArguments = {
 	total?: number
 }
 
-export interface IPagination extends TPagination {
+export class Pagination implements TPagination {
 	/**
 	 * Максимальный лимит элементов.
 	 */
-	get maxLimit(): number
-
-	/**
-	 * Парсинг аргументов.
-	 * @param arg - Значение аргумента для парсинга.
-	 * @param defaultReturnValue - Возвращаемое значение по умолчанию.
-	 * @returns Возвращает абсолютное значение числа аргумента.
-	 */
-	parseArg(
-		arg: number | string | undefined,
-		defaultReturnValue: number
-	): number
-
-	/**
-	 * Присваивает значения для основных свойств класса и считает кол-во
-	 * пропускаемых элементов в зависимости от полученных аргументов.
-	 * @param args - Аргументы пагинации.
-	 * @returns Возвращает текущий экземпляр класса.
-	 */
-	set(args: TPaginationArguments): this
-
-	/**
-	 * Возвращает простой объект пагинации.
-	 * @returns Объект пагинации.
-	 */
-	toObject(): TPagination
-}
-
-export class Pagination implements IPagination {
-	/**
-	 * Максимальный лимит элементов.
-	 */
-	private _maxLimit: number
+	#maxLimit: number
 
 	page: number = DEFAULTS.page
 	limit: number = DEFAULTS.limit
@@ -89,12 +63,8 @@ export class Pagination implements IPagination {
 	}
 
 	constructor(args: TPaginationArguments = {}, maxLimit?: number) {
-		this._maxLimit = this.parseArg(maxLimit, DEFAULTS.maxLimit)
+		this.#maxLimit = this.parseArg(maxLimit, DEFAULTS.maxLimit)
 		this.set(args)
-	}
-
-	get maxLimit() {
-		return this._maxLimit
 	}
 
 	parseArg(arg: TPaginationParseArg, defaultReturnValue: number): number {
@@ -118,7 +88,7 @@ export class Pagination implements IPagination {
 		}
 
 		// Проверка лимита.
-		if (this.limit > this.maxLimit) this.limit = this.maxLimit
+		if (this.limit > this.#maxLimit) this.limit = this.#maxLimit
 
 		// Общее кол-во.
 		if (args.total && args.total !== this.total) {
