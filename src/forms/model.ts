@@ -3,7 +3,6 @@ import type { TNotificationItem } from '../notification'
 
 import { FormSchemaCtrl } from './ctrl'
 
-
 /**
  * Интерфейс базовой формы для сущностей в БД.
  */
@@ -17,7 +16,7 @@ export interface IFormModel<T> {
 	obj: T
 	ctrls: FormSchemaCtrl[]
 
-	_errors: {[PropKey in keyof T]?: string}
+	_errors: { [PropKey in keyof T]?: string }
 	errors: TNotificationItem[]
 
 	isValid(): boolean
@@ -38,7 +37,7 @@ export class BaseFormModel<T extends object = {}> implements IFormModel<T> {
 	schema: z.ZodObject<z.ZodRawShape>
 	ctrls: FormSchemaCtrl[] = []
 
-	_errors: {[PropKey in keyof T]?: string} = {}
+	_errors: { [PropKey in keyof T]?: string } = {}
 
 	constructor(obj: any = {}, schema: z.ZodObject<z.ZodRawShape>) {
 		this._id = obj._id || 'create'
@@ -100,5 +99,10 @@ export class BaseFormModel<T extends object = {}> implements IFormModel<T> {
 
 	mergeObj(obj: any) {
 		this.obj = Object.assign(this.obj, obj)
+	}
+
+	updateCtrl(key: keyof T, ctrl: Partial<FormSchemaCtrl>) {
+		const fieldIndex = this.ctrls.findIndex(e => e.key === key)
+		this.ctrls[fieldIndex] = Object.assign(this.ctrls[fieldIndex], ctrl)
 	}
 }
