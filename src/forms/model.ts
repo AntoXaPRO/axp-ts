@@ -97,4 +97,8 @@ export class BaseFormModel<T extends object = {}> implements IFormModel<T> {
 	setValidError(code: string, text: string) {
 		this._errors[code] = code + ' - ' + text
 	}
+
+	mergeObj(obj: any) {
+		this.obj = Object.assign(this.obj, obj)
+	}
 }
