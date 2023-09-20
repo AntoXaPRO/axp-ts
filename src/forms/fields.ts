@@ -12,6 +12,11 @@ import {
 } from './helpers'
 import { FormSchemaCtrl } from './ctrl'
 
+export type TUiFieldSelectOption = {
+	text: string
+	value: string
+}
+
 /**
  * Create field schema.
  */
