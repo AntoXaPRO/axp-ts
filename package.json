@@ -11,14 +11,14 @@
 	"main": "dist/index.js",
 	"files": [
 		"dist",
-		"tsconfig.ts"
+		"tsconfig.json"
 	],
 	"scripts": {
 		"build": "tsc",
 		"prepare": "npm run build"
 	},
 	"dependencies": {
-		"zod": "^3.22.1"
+		"zod": "^3.22.2"
 	},
 	"devDependencies": {
 		"prettier": "^2.8.8",
