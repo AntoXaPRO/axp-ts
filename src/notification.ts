@@ -7,8 +7,8 @@ export class NotificationItem implements TNotificationItem {
 	code: string
 	text: string
 
-	constructor(args: { code: string; text: string }) {
-		this.code = args.code
+	constructor(args: { text: string, code?: string  }) {
 		this.text = args.text
+		this.code = args.code || 'info'
 	}
 }
