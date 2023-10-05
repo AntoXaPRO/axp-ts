@@ -5,7 +5,6 @@ import { isEqual } from '../utils'
 import { Pagination, paginationQuerySchema } from './pagination'
 import { bFieldsSchema, cFieldsSchema, fieldSchema } from '../forms'
 
-
 export const querySchema = cFieldsSchema
 	.pick({ q: true })
 	.extend(paginationQuerySchema.shape)
@@ -14,6 +13,8 @@ export const querySchema = cFieldsSchema
 			label: 'Сортировка'
 		})
 	})
+	.partial()
+	.describe('Параметры базового запроса')
 
 export type TQuery = z.infer<typeof querySchema>
 
@@ -32,37 +33,30 @@ export class FindFilter<T extends TQuery> implements TFindFilter<T> {
 	sort?: string
 
 	constructor(query?: T) {
-		let queryCopy = Object.assign({}, query)
+		let queryCopy: T = Object.assign({}, query)
 
 		// Pagination.
 		this.setPagination(queryCopy)
-		for (const key of Object.keys(this.pagination)) {
-			if (queryCopy[key]) delete queryCopy[key]
+		if (this.pagination) {
+			// Delete pagination props.
+			const paginationKeys = Object.keys(this.pagination) as [keyof T]
+			for (const key of paginationKeys) {
+				if (queryCopy[key]) delete queryCopy[key]
+			}
 		}
 
 		// Sort.
 		if (queryCopy.sort) {
 			this.sort = queryCopy.sort
-			delete queryCopy.sort
+			queryCopy.sort = undefined
 		}
 
 		// Obj.
 		this.obj = queryCopy
 	}
 
-	setPagination(pagination?: TPagination) {
+	setPagination(pagination?: Partial<TPagination>) {
 		this.pagination = new Pagination(pagination).toObject()
-	}
-
-	static getQuery <T extends TQuery = {}>(filter: TFindFilter<T>): T {
-		let query: any = {}
-		for(const key of Object.keys(filter.obj)) {
-			query[key] = filter.obj[key]
-		}
-		if (filter.pagination?.page) query.page = filter.pagination.page
-		if (filter.pagination?.limit) query.limit = filter.pagination.limit
-		if (filter.sort) query.sort = filter.sort
-		return query
 	}
 
 	toObject(): TFindFilter<T> {

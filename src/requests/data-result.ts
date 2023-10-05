@@ -30,7 +30,7 @@ export class DataResultEntity<T> implements IDataResult<T> {
 		this.setData()
 	}
 
-	setData(data: T = null, pagination?: TPagination): void {
+	setData(data: T | null = null, pagination?: TPagination): void {
 		if (data !== null) {
 			this.data = data
 		}

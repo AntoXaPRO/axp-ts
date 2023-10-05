@@ -73,7 +73,7 @@ export class BaseFormModel<T extends object = {}> implements IFormModel<T> {
 		let items: TNotificationItem[] = []
 		for (const code in this._errors) {
 			const text = this._errors[code]
-			items.push({ code, text })
+			if (text) items.push({ code, text })
 		}
 		return items
 	}
@@ -94,7 +94,9 @@ export class BaseFormModel<T extends object = {}> implements IFormModel<T> {
 	}
 
 	setValidError(code: string, text: string) {
-		this._errors[code] = code + ' - ' + text
+		let obj:any = {}
+		obj[code] = code + ' - ' + text
+		this._errors = Object.assign(this._errors, obj)
 	}
 
 	mergeObj(obj: any) {

@@ -22,7 +22,7 @@ export type TUiFieldSelectOption = {
  */
 export const fieldSchema = <T extends ZodTypeAny>(
 	base: T,
-	args?: TFormSchemaCtrlArgs
+	args: TFormSchemaCtrlArgs = {}
 ) => base.describe(FormSchemaCtrl.toString(args, base.description))
 
 /**

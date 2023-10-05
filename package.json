@@ -1,6 +1,6 @@
 {
 	"name": "axp-ts",
-	"version": "1.9.11",
+	"version": "1.9.10",
 	"description": "TypeScript helper library",
 	"author": "AntoXa PRO <info@antoxa.pro>",
 	"homepage": "https://antoxahub.ru/antoxa/axp-ts",
@@ -8,20 +8,31 @@
 		"type": "git",
 		"url": "https://antoxahub.ru/antoxa/axp-ts.git"
 	},
-	"main": "dist/index.js",
+	"module": "./dist/index.mjs",
+	"main": "./dist/index.umd.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"requier": "./dist/index.umd.js"
+		},
+		"./tsconfig.json": "./tsconfig.json"
+	},
 	"files": [
 		"dist",
 		"tsconfig.json"
 	],
 	"scripts": {
-		"build": "tsc",
+		"build": "vite build",
 		"prepare": "npm run build"
 	},
-	"dependencies": {
-		"zod": "^3.22.2"
+	"peerDependencies": {
+		"zod": "^3.22.4"
 	},
 	"devDependencies": {
 		"prettier": "^2.8.8",
-		"typescript": "^4.9.5"
+		"typescript": "^4.9.5",
+		"vite": "^4.4.11",
+		"vite-plugin-dts": "^3.6.0"
 	}
 }

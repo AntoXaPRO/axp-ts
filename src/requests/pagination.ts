@@ -21,9 +21,13 @@ export const paginationSchema = cFieldsSchema
 
 export type TPagination = z.infer<typeof paginationSchema>
 
-export const paginationQuerySchema = paginationSchema.pick({
-	page: true, limit: true
-})
+export const paginationQuerySchema = paginationSchema
+	.pick({
+		page: true,
+		limit: true
+	})
+	.partial()
+	.describe('Параметры разбиения на страницы')
 
 export type TPaginationQuery = z.infer<typeof paginationQuerySchema>
 
@@ -113,7 +117,6 @@ export class Pagination implements TPagination {
 			page: this.page,
 			limit: this.limit,
 			total: this.total,
-
 			skip: this.skip,
 			pages: this.pages
 		}
