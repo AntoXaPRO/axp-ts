@@ -1,6 +1,9 @@
 import { z } from 'zod'
 import { cFieldsSchema, fieldSchema } from '../forms'
 
+/**
+ * Модель данных для пагинайи.
+ */
 export const paginationSchema = cFieldsSchema
 	.pick({
 		page: true,
@@ -17,10 +20,16 @@ export const paginationSchema = cFieldsSchema
 			label: 'Кол-во всех страниц'
 		})
 	})
-	.describe('Пагинация')
+	.describe('Данные пагинации')
 
+/**
+ * Модель данных для пагинайи.
+ */
 export type TPagination = z.infer<typeof paginationSchema>
 
+/**
+ * Модель данных для пагинайи для запросе.
+ */
 export const paginationQuerySchema = paginationSchema
 	.pick({
 		page: true,
@@ -29,19 +38,25 @@ export const paginationQuerySchema = paginationSchema
 	.partial()
 	.describe('Параметры разбиения на страницы')
 
+/**
+ * Модель данных для пагинайи для запросе.
+ */
 export type TPaginationQuery = z.infer<typeof paginationQuerySchema>
 
-// Константы.
+//
+// Переделать.
+//
 const DEFAULTS = { page: 1, limit: 10, maxLimit: 100 }
-
 export type TPaginationParseArg = number | string | undefined
-
 export type TPaginationArguments = {
 	page?: TPaginationParseArg
 	limit?: TPaginationParseArg
 	total?: number
 }
 
+/**
+ * @todo Переделать логику.
+ */
 export class Pagination implements TPagination {
 	/**
 	 * Максимальный лимит элементов.
@@ -120,5 +135,9 @@ export class Pagination implements TPagination {
 			skip: this.skip,
 			pages: this.pages
 		}
+	}
+
+	getQuery(): TPaginationQuery {
+		return { page: this.page, limit: this.limit }
 	}
 }

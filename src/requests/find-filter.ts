@@ -1,4 +1,4 @@
-import type { TPagination } from './pagination'
+import type { TPaginationQuery } from './pagination'
 
 import { z } from 'zod'
 import { isEqual } from '../utils'
@@ -19,26 +19,30 @@ export const querySchema = cFieldsSchema
 export type TQuery = z.infer<typeof querySchema>
 
 /**
- * Объект для преобразования фильтра в URL.
+ * Класс для работы с запросами (для удобства).
  */
 export type TFindFilter<T extends TQuery> = {
-	obj?: Omit<T, 'page' | 'limit' | 'sort'>
-	pagination?: TPagination
+	obj: Omit<T, 'page' | 'limit' | 'sort'>
+	pagination: TPaginationQuery
 	sort?: string
 }
 
+/**
+ * Класс для работы с запросами (для удобства).
+ */
 export class FindFilter<T extends TQuery> implements TFindFilter<T> {
-	obj?: Omit<T, 'page' | 'limit' | 'sort'>
-	pagination?: TPagination
+	obj: Omit<T, 'page' | 'limit' | 'sort'>
+	pagination: TPaginationQuery
 	sort?: string
 
 	constructor(query?: T) {
+		// Copy fiends.
 		let queryCopy: T = Object.assign({}, query)
 
 		// Pagination.
-		this.setPagination(queryCopy)
-		if (this.pagination) {
-			// Delete pagination props.
+		this.pagination = new Pagination(queryCopy).getQuery()
+		// Delete pagination fields.
+		if (this.pagination as TPaginationQuery) {
 			const paginationKeys = Object.keys(this.pagination) as [keyof T]
 			for (const key of paginationKeys) {
 				if (queryCopy[key]) delete queryCopy[key]
@@ -48,15 +52,15 @@ export class FindFilter<T extends TQuery> implements TFindFilter<T> {
 		// Sort.
 		if (queryCopy.sort) {
 			this.sort = queryCopy.sort
-			queryCopy.sort = undefined
+			delete queryCopy.sort
 		}
 
 		// Obj.
 		this.obj = queryCopy
 	}
 
-	setPagination(pagination?: Partial<TPagination>) {
-		this.pagination = new Pagination(pagination).toObject()
+	setPagination(pagination?: TPaginationQuery) {
+		this.pagination = new Pagination(pagination).getQuery()
 	}
 
 	toObject(): TFindFilter<T> {
