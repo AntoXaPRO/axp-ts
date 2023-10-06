@@ -35,6 +35,17 @@ export class FindFilter<T extends TQuery> implements TFindFilter<T> {
 	pagination?: TPaginationQuery
 	sort?: string
 
+	static getQuery<T extends TQuery>(filter: TFindFilter<T>): T {
+		return Object.assign(
+			{ ...filter.obj, ...filter.pagination },
+			{ sort: filter.sort }
+		) as T
+	}
+
+	static parse<T extends TQuery>(filter: TFindFilter<T>): FindFilter<T> {
+		return new FindFilter<T>(this.getQuery(filter))
+	}
+
 	constructor(query?: T) {
 		// Copy fiends.
 		let queryCopy: T = Object.assign({}, query)
@@ -59,6 +70,9 @@ export class FindFilter<T extends TQuery> implements TFindFilter<T> {
 		this.obj = queryCopy
 	}
 
+	/**
+	 * @deprecated.
+	 */
 	setPagination(pagination?: TPaginationQuery) {
 		this.pagination = new Pagination(pagination).getQuery()
 	}
@@ -71,40 +85,38 @@ export class FindFilter<T extends TQuery> implements TFindFilter<T> {
 		}
 	}
 
-	isEqual(filters: TFindFilter<T>[]) {
-		return isEqual([this, ...filters])
-	}
-
-	toString(filter?: TFindFilter<TQuery>, opt?: { base?: string }): string {
+	toString(opt?: { base?: string }): string {
 		let url = opt?.base?.replace(/[?]$/, '') || ''
 
-		if (filter) {
-			const query: string[] = []
+		const query: string[] = []
 
-			// Params and Pagination.
-			for (const [key, val] of Object.entries({
-				...filter.obj,
-				...filter.pagination
-			})) {
-				if (val) {
-					const keyEncode = encodeURIComponent(key)
-					const valEncode = encodeURIComponent(val)
-					query.push(keyEncode + '=' + valEncode)
-				}
-			}
-
-			// Sort.
-			if (filter.sort) {
-				try {
-					query.push('sort=' + encodeURIComponent(filter.sort))
-				} catch (e) {}
-			}
-
-			if (query.length) {
-				url += '?' + query.join('&')
+		// Params and Pagination.
+		for (const [key, val] of Object.entries({
+			...this.obj,
+			...this.pagination
+		})) {
+			if (val) {
+				const keyEncode = encodeURIComponent(key)
+				const valEncode = encodeURIComponent(val)
+				query.push(keyEncode + '=' + valEncode)
 			}
 		}
 
+		// Sort.
+		if (this.sort) {
+			try {
+				query.push('sort=' + encodeURIComponent(this.sort))
+			} catch (e) {}
+		}
+
+		if (query.length) {
+			url += '?' + query.join('&')
+		}
+
 		return url
+	}
+
+	isEqual(filters: TFindFilter<T>[]) {
+		return isEqual([this, ...filters])
 	}
 }
