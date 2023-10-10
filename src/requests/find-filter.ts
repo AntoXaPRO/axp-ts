@@ -110,7 +110,7 @@ export class FindFilter<T extends TQuery> implements TFindFilter<T> {
 		}
 
 		if (query.length) {
-			url += '?' + query.join('&')
+			url += query.join('&')
 		}
 
 		return url
